@@ -13,7 +13,7 @@ We will provision dedicated infrastructure on AWS.
 The entire deployment is on a dedicated Internet Gateway, VPC, Route 53 for managing the Public and Private DNS names and EC2 compute nodes.
 See the diagram below for details.
 
-![Image AWS](./img/AWS-Components.png)
+![Image AWS](https://github.com/mirkenstein/elk-ansible-deployment/blob/master/img/AWS-Components.png)
 
 #### ELK Stack Components Overview  
 Then we will install and configure 3 Node elasticsearch cluster on dedicated compute instances. 
@@ -31,14 +31,14 @@ their respective Ansible inventory variables.
 Physically we will be using the same elasticsearch cluster. 
 
 
-![Image ELK](./img/AWS-Components-ELK-Stack.png)
+![Image ELK](https://github.com/mirkenstein/elk-ansible-deployment/blob/master/img/AWS-Components-ELK-Architecture.png)
 
 #### Service layout on the EC2
 We are deploying the services on four EC2s. One shared EC2 for the Kibana, Logstash, APM server and Enterprise Search and on rest for the 3 node Elasticsearch cluster.
 Filebeat and metricbeat is deployed on each EC2. 
 For this setup we will use the same 3 node cluster as a monitoring cluster. In the playbooks  input Variables  configurations we have dedicated entries for the monitoring cluster.bnh  
 
-![Image ELK](./img/AWS-Components-EC2.png)
+![Image ELK](https://github.com/mirkenstein/elk-ansible-deployment/blob/master/img/AWS-Components-EC2.png)
 #### Detailed Step-by-Step Guides 
 1. Run terraform to provision the infrastructure is described in a separate repository [https://github.com/mirkenstein/elk-ec2-terraform-aws](https://github.com/mirkenstein/elk-ec2-terraform-aws)
 2. Preparatory steps
