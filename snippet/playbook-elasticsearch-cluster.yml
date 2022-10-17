@@ -1,0 +1,85 @@
+- hosts: es-nodes
+  roles:
+    - role: ansible-elasticsearch
+  vars:
+    seed_hosts: "[{%for host in groups['es-nodes']%}\"{{hostvars[host].ansible_eth0.ipv4.address}}:9300\"{% if not loop.last %},{% endif %}{% endfor %}]"
+    master_nodes: "[{%for host in groups['es-nodes']%}\"{{hostvars[host].ansible_eth0.ipv4.address}}\"{% if not loop.last %},{% endif %}{% endfor %}]"
+    es_heap_size: "{{hostvars[inventory_hostname].heap_size}}"
+    es_version: "{{hostvars[inventory_hostname].es_version}}"
+    es_package_dir: "{{hostvars[inventory_hostname].es_package_dir}}"
+    es_data_dirs:
+      - "/opt/data"
+    es_api_host: "{{ ansible_default_ipv4.address}}"
+    # es_log_dir: "/opt/logs/{{hostvars[inventory_hostname].cluster_name}}/{{hostvars[inventory_hostname].node_name}}"
+    es_config:
+      node.name: "{{hostvars[inventory_hostname].node_name}}"
+      cluster.name: "{{hostvars[inventory_hostname].cluster_name}}"
+      cluster.initial_master_nodes: "{{master_nodes}}"
+      discovery.seed_hosts: "{{ seed_hosts }}"
+      network.host: "_eth0_"
+      node.roles: [master,data,ingest]
+      xpack.monitoring.collection.enabled: true
+      xpack.security.http.ssl.client_authentication: none
+      xpack.security.transport.ssl.client_authentication: none
+    es_api_basic_auth_username: elastic
+    es_api_basic_auth_password: "{{hostvars[inventory_hostname].elastic_pass}}"
+    es_enable_http_ssl: true
+    es_enable_transport_ssl: true
+    es_ssl_keystore: "files/certs/{{hostvars[inventory_hostname].cert_file}}"
+    es_ssl_truststore: "files/certs/{{hostvars[inventory_hostname].cert_file}}"
+    es_ssl_keystore_password: "{{hostvars[inventory_hostname].cert_pass}}"
+    es_ssl_truststore_password: "{{hostvars[inventory_hostname].cert_pass}}"
+    es_validate_certs: no
+    es_action_auto_create_index: ".ent-search-*-logs-*,-.ent-search-*,+*"
+    es_xpack_trial: false
+    es_use_repository: true
+    es_custom_package_url: "{{es_package_dir}}/elasticsearch-{{es_version}}-x86_64.rpm"
+#    es_user_id: 992
+#    es_group_id: 990
+    es_plugins:
+      - plugin: ingest-attachment
+      - plugin: mapper-murmur3
+      - plugin: repository-s3
+    es_roles:
+        native:
+          logstash_writer:
+            cluster:
+              - "manage_index_templates"
+              - "monitor"
+              - "manage_ilm"
+            indices:
+              - names: "logstash-*"
+                privileges:
+                  - all
+          beats_agent:
+            cluster:
+              - "read_ilm"
+              - "monitor"
+              - "manage_ilm"
+              - "manage_ingest_pipelines"
+              - "manage_index_templates"
+            indices:
+              - names:  ["filebeat-*","metricbeat-*",".monitoring*"]
+                privileges:
+                  - all
+    es_users:
+        native:
+          kibana_system:
+            password: "{{hostvars[inventory_hostname].kibana_system_pass}}"
+          logstash_system:
+            password: "{{hostvars[inventory_hostname].logstash_system_pass}}"
+          beats_system:
+            password: "{{hostvars[inventory_hostname].beats_system_pass}}"
+          apm_system:
+            password: "{{hostvars[inventory_hostname].apm_system_pass}}"
+          remote_monitoring_user:
+            password: "{{hostvars[inventory_hostname].remote_monitoring_user_pass}}"
+          logstash_internal:
+            password: "{{hostvars[inventory_hostname].logstash_internal_pass}}"
+            roles: logstash_writer
+          beats_user:
+            password: "{{hostvars[inventory_hostname].beats_user_pass}}"
+            roles:
+              - "beats_agent"
+              - "beats_admin"
+              - "beats_system"
