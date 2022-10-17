@@ -40,7 +40,9 @@ For this setup we will use the same 3 node cluster as a monitoring cluster. In t
 
 ![Image ELK](./img/AWS-Components-EC2.png)
 #### Detailed Step-by-Step Guides 
-1. Run terraform to provision the infrastructure is described in a separate repository [https://github.com/mirkenstein/elk-ec2-terraform-aws](https://github.com/mirkenstein/elk-ec2-terraform-aws)
+1. Run terraform to provision the infrastructure is described in a separate repository 
+   - For Terraform [https://github.com/elk-ansible/elk-ec2-terraform-aws](https://github.com/elk-ansible/elk-ec2-terraform-aws)
+   - For AWS CDK [https://github.com/elk-ansible/elk-ec2-cdk-aws](https://github.com/elk-ansible/elk-ec2-cdk-aws)
 2. Preparatory steps
    1. [Configure your DNS provider to use the AWS Nameservers](./README_DNS.md) 
    2. [Generate the SSL certificates for our domain with Lets Encrypt acme.sh script](./README_SSL_CERTS.md)
@@ -51,6 +53,6 @@ For this setup we will use the same 3 node cluster as a monitoring cluster. In t
    2. [Kibana](./INSALL_KIBANA.md)
    3. [Beats](./INSTALL_BEATS.md)
    4. [Enterprise Search](./INSTALL_ENT_SEARCH.md)
-   5. Logstash ..coming soon
+   5. [Logstash](./INSTALL_LOGSTASH.md)
    6. [APM server](./INSTALL_APM_SERVER.md) 
 
